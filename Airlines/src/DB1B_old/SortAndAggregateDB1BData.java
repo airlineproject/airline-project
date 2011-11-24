@@ -1,4 +1,4 @@
-package DB1B;
+package DB1B_old;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +15,10 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import DB1B.DB1BDataObject;
+import DB1B.TkCarrierOpCarrierYearAirportGroupComparator;
+import DB1B.TkCarrierOpCarrierYearQuarterIDAirportGroupComparator;
 
 
 public class SortAndAggregateDB1BData {
@@ -362,6 +366,7 @@ public class SortAndAggregateDB1BData {
 
 				baseline = compareline;
 				combinedPassengers = compareline.getPassengers();
+				combinedMarketFare = compareline.getMarketFare();
 			}			
 		}
 

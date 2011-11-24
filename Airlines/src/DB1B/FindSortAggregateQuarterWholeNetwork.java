@@ -18,15 +18,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FindandSortNonstopFlights {
+public class FindSortAggregateQuarterWholeNetwork {
 
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
 	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output_nonstop";
+	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
 	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
-	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output_nonstop";
+	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
 
 	String fileSegment = "Origin_and_Destination_Survey_DB1BMarket_";
 	static String output = "flightdatalist_nonstop";	
@@ -43,7 +43,7 @@ public class FindandSortNonstopFlights {
 
 	public static void main(String[] args){
 
-		new FindandSortNonstopFlights().doAll();
+		new FindSortAggregateQuarterWholeNetwork().doAll();
 
 	}
 
@@ -69,7 +69,6 @@ public class FindandSortNonstopFlights {
 
 	private void findAndSortQuarters() {
 
-		output = "flightdatalist_sorted";
 		for(int j = startyear; j <= endyear; j++){
 			for(int k =2; k<=2; k++) {
 
@@ -78,12 +77,12 @@ public class FindandSortNonstopFlights {
 
 				// Collapse data within Quarter to one observation per airportGroup and save it to csv
 				LinkedList<NonstopDataObject> QuarterDataList = aggregateWithinQuarter(sortedDB1B);
-				output = "flightdatalist_quarterAggregate";	
+				output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_quarteraggregate_sorted";
 				//printDB1BDataObjects(QuarterDataList,j,k);
 
 				// Split Market data into nonstop-flights and only keep nonstop connections
-				LinkedList<NonstopDataObject> QuarterNonstopDataList = aggregateNonstopWithinQuarter(QuarterDataList);
-				output = "flightdatalist_quarter_Nonstop_Aggregate";	
+				LinkedList<NonstopDataObject> QuarterNonstopDataList = makeNonstopAndAggregateWithinQuarter(QuarterDataList);
+				output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_quarteraggregate_sorted";
 				printDB1BDataObjects(QuarterNonstopDataList,j,k);
 
 
@@ -94,7 +93,7 @@ public class FindandSortNonstopFlights {
 
 
 	/**
-	 * This function reads in the output file from FindAndCombineDb1BData and constructs an DB1BFlightDataObject
+	 * This function reads in the quarterly data and constructs an DB1BNonstopDataObject
 	 * which contains all the sorted data.
 	 * 
 	 * @returns the data in a suitable way
@@ -259,7 +258,7 @@ public class FindandSortNonstopFlights {
 	}
 
 
-	private LinkedList<NonstopDataObject> aggregateNonstopWithinQuarter(LinkedList<NonstopDataObject> _quarterDataList) {
+	public LinkedList<NonstopDataObject> makeNonstopAndAggregateWithinQuarter(LinkedList<NonstopDataObject> _quarterDataList) {
 
 		System.out.println("aggregateNonstopWithinQuarter");
 
@@ -293,8 +292,6 @@ public class FindandSortNonstopFlights {
 				//Remember the passengers!!
 				flight = new NonstopDataObject(origin, destination, new String(origin+":"+destination), line.getYear(), line.getQuarterID(), line.getPassengers());
 				nonstopFlights.add(flight);
-
-				origin = destination;
 			}
 		}
 

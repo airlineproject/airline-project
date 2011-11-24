@@ -33,7 +33,7 @@ public class findHubPassengers {
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
 	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output_hubpassengers";
+	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
 	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
 	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output_hubpassengers";
@@ -79,9 +79,9 @@ public class findHubPassengers {
 
 	private void findAndPrintHubPassengers() {
 
-		output = "flightdatalist_hubpassengers";
+		output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"hubpassengers"+File.separator+"flightdatalist_hubpassengers";
 		for(int j = startyear; j <= endyear; j++){
-			for(int k =4; k<=4; k++) {
+			for(int k =1; k<=4; k++) {
 
 				// Read in the data and remember the Hub passengers for every Airport
 				THashMap<String, Integer> hubPassengers = findPassengers(j,k);

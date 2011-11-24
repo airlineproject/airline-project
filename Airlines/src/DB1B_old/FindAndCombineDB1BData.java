@@ -1,4 +1,4 @@
-package DB1B;
+package DB1B_old;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -157,7 +157,6 @@ public class FindAndCombineDB1BData {
 						destination = destination.substring(1, destination.length()-1);
 						if(debug) System.out.print(destination+" - ");
 
-						//Airport Group.			
 						airportGroup = tokens[21];
 						airportGroup = airportGroup.substring(1 , airportGroup.length()-1);
 						if(debug) System.out.print(airportGroup+" - ");

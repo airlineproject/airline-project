@@ -19,11 +19,12 @@ import java.util.regex.Pattern;
 public class FindAirports {
 
 	// Linux File Folders
-	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
+	//static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
+	//static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
-	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
-	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
+	//Windows File Folders
+	static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
+	static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
 
 	String fileSegment = "Origin_and_Destination_Survey_DB1BMarket_";
 	static String output = "airportList";	
