@@ -39,7 +39,7 @@ public class FindSortAggregateAirline {
 
 
 	//if set to a negative number <0, all lines will be read
-	int numberOfLinesToReadTestMode = 10000;
+	int numberOfLinesToReadTestMode = -1;
 
 	public static void main(String[] args){
 
