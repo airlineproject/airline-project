@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FindSortAggregateQuarterAirline {
+public class FindSortAggregateAirline {
 
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
@@ -39,11 +39,11 @@ public class FindSortAggregateQuarterAirline {
 
 
 	//if set to a negative number <0, all lines will be read
-	int numberOfLinesToReadTestMode = -1;
+	int numberOfLinesToReadTestMode = 10000;
 
 	public static void main(String[] args){
 
-		new FindSortAggregateQuarterAirline().doAll();
+		new FindSortAggregateAirline().doAll();
 
 	}
 
@@ -60,11 +60,13 @@ public class FindSortAggregateQuarterAirline {
 
 		findAndSortQuarters();
 
-		// TODO: COMBINE QUARTERS
+		// TODO: AGGREGATE WITHIN YEAR
+
 
 
 	}
 
+	
 
 
 	private void findAndSortQuarters() {
@@ -444,9 +446,6 @@ public class FindSortAggregateQuarterAirline {
 		}
 
 	}
-
-
-
 
 
 
