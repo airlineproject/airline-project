@@ -1,5 +1,6 @@
 package DB1B;
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -71,7 +71,7 @@ public class FindandSortNonstopFlights {
 
 		output = "flightdatalist_sorted";
 		for(int j = startyear; j <= endyear; j++){
-			for(int k =1; k<=4; k++) {
+			for(int k =2; k<=2; k++) {
 
 				// Read in the data and sort it by AirportGroup
 				LinkedList<NonstopDataObject> sortedDB1B = findAndSortDB1BFlights(j,k);
@@ -283,9 +283,12 @@ public class FindandSortNonstopFlights {
 
 			StringTokenizer st = new StringTokenizer(airportGroup, ":");
 			origin = st.nextToken();
+			destination = st.nextToken();
+			flight = new NonstopDataObject(origin, destination, new String(origin+":"+destination), line.getYear(), line.getQuarterID(), line.getPassengers());
 			while(st.hasMoreTokens()){
+				origin = destination;
 				destination = st.nextToken();
-
+				
 				//Add this origin-destination combination as a new nonstop-flight in nonstopflight
 				//Remember the passengers!!
 				flight = new NonstopDataObject(origin, destination, new String(origin+":"+destination), line.getYear(), line.getQuarterID(), line.getPassengers());
@@ -338,9 +341,6 @@ public class FindandSortNonstopFlights {
 
 
 	}
-
-
-
 
 
 
