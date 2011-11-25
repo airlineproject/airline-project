@@ -22,11 +22,11 @@ public class FindSortAggregateAirline {
 
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
-	//static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	//static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output_nonstop";
+	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
+	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
-	static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
-	static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
+	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
+	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
 
 	String fileSegment = "Origin_and_Destination_Survey_DB1BMarket_";
 	static String output = "nonstop_quarteraggregate_alliances";	

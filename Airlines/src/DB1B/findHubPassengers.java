@@ -42,8 +42,8 @@ public class findHubPassengers {
 	static String output = "flightdatalist_nonstop";	
 	static String extension = ".csv";
 
-	static int startyear = 2000;
-	static int endyear =  2000;  // BEWARE; ENDYEAR NEEDS TO HAVE 4 QUARTERS AVAILABLE
+	static int startyear = 1993;
+	static int endyear =  2010;  // BEWARE; ENDYEAR NEEDS TO HAVE 4 QUARTERS AVAILABLE
 
 	static boolean debug = false;
 

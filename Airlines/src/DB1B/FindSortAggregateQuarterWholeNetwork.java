@@ -33,7 +33,7 @@ public class FindSortAggregateQuarterWholeNetwork {
 	static String extension = ".csv";
 
 	static int startyear = 1993;
-	static int endyear =  1993;  // BEWARE; ENDYEAR NEEDS TO HAVE 4 QUARTERS AVAILABLE
+	static int endyear =  2010;  // BEWARE; ENDYEAR NEEDS TO HAVE 4 QUARTERS AVAILABLE
 
 	static boolean debug = false;
 
@@ -60,7 +60,7 @@ public class FindSortAggregateQuarterWholeNetwork {
 
 		findAndSortQuarters();
 
-		// TODO: COMBINE QUARTERS
+		findAndAggregateYear();
 
 
 	}
@@ -70,26 +70,62 @@ public class FindSortAggregateQuarterWholeNetwork {
 	private void findAndSortQuarters() {
 
 		for(int j = startyear; j <= endyear; j++){
-			for(int k =2; k<=2; k++) {
+
+			for(int k =1; k<=4; k++) {
 
 				// Read in the data and sort it by AirportGroup
 				LinkedList<NonstopDataObject> sortedDB1B = findAndSortDB1BFlights(j,k);
 
 				// Collapse data within Quarter to one observation per airportGroup and save it to csv
-				LinkedList<NonstopDataObject> QuarterDataList = aggregateWithinQuarter(sortedDB1B);
-				output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_quarteraggregate_sorted";
-				//printDB1BDataObjects(QuarterDataList,j,k);
+				LinkedList<NonstopDataObject> QuarterDataList = aggregateToAirportGroup(sortedDB1B);
+				output = "quarteraggregate"+File.separator+"wholeNetwork"+File.separator+"quarteraggregate_sorted";
+				printDB1BDataObjects(QuarterDataList,j,k);
 
 				// Split Market data into nonstop-flights and only keep nonstop connections
-				LinkedList<NonstopDataObject> QuarterNonstopDataList = makeNonstopAndAggregateWithinQuarter(QuarterDataList);
+				LinkedList<NonstopDataObject> QuarterNonstopDataList = makeNonstopAndAggregateToAirportGroup(QuarterDataList);
 				output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_quarteraggregate_sorted";
 				printDB1BDataObjects(QuarterNonstopDataList,j,k);
 
-
 			}
+
 		}
 
 	}
+
+
+	private void findAndAggregateYear() {
+
+		for(int j = startyear; j <= endyear; j++){
+
+			// Read in the four quarters
+
+			LinkedList<NonstopDataObject> sortedDB1BAllQuarters = new LinkedList<NonstopDataObject>();
+
+			for(int k =1; k<=4; k++) {	
+
+				readInDB1BQuarter(j,k, sortedDB1BAllQuarters);
+
+			}
+
+			// Aggregate and save to csv
+			LinkedList<NonstopDataObject> YearDataList = aggregateToAirportGroup(sortedDB1BAllQuarters);
+			output = "yearaggregate"+File.separator+"wholeNetwork"+File.separator+"nonstop_yearaggregate_sorted";
+			printDB1BDataObjects(YearDataList,j,0);
+			
+			
+			// Split Market data into nonstop-flights and only keep nonstop connections
+			LinkedList<NonstopDataObject> YearNonstopDataList = makeNonstopAndAggregateToAirportGroup(YearDataList);
+			output = "yearaggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_yearaggregate_sorted";
+			printDB1BDataObjects(YearNonstopDataList,j,0);
+			
+			
+
+		}
+
+	}
+
+
+
 
 
 	/**
@@ -209,10 +245,12 @@ public class FindSortAggregateQuarterWholeNetwork {
 		return sortedDB1B;
 	}
 
+	
+	
 
-	public LinkedList<NonstopDataObject> aggregateWithinQuarter(LinkedList<NonstopDataObject> _sortedDB1B){
+	public LinkedList<NonstopDataObject> aggregateToAirportGroup(LinkedList<NonstopDataObject> _sortedDB1B){
 
-		System.out.println("aggregateWithinQuarter");
+		System.out.println("aggregateToAirportGroup");
 
 		LinkedList<NonstopDataObject> aggregatedNonstopList = new LinkedList<NonstopDataObject>();
 		Comparator<NonstopDataObject> comparate = new AirportGroupComparator();
@@ -256,9 +294,10 @@ public class FindSortAggregateQuarterWholeNetwork {
 
 
 	}
-
-
-	public LinkedList<NonstopDataObject> makeNonstopAndAggregateWithinQuarter(LinkedList<NonstopDataObject> _quarterDataList) {
+	
+	
+	
+	public LinkedList<NonstopDataObject> makeNonstopAndAggregateToAirportGroup(LinkedList<NonstopDataObject> _quarterDataList) {
 
 		System.out.println("aggregateNonstopWithinQuarter");
 
@@ -287,7 +326,7 @@ public class FindSortAggregateQuarterWholeNetwork {
 			while(st.hasMoreTokens()){
 				origin = destination;
 				destination = st.nextToken();
-				
+
 				//Add this origin-destination combination as a new nonstop-flight in nonstopflight
 				//Remember the passengers!!
 				flight = new NonstopDataObject(origin, destination, new String(origin+":"+destination), line.getYear(), line.getQuarterID(), line.getPassengers());
@@ -338,6 +377,83 @@ public class FindSortAggregateQuarterWholeNetwork {
 
 
 	}
+
+
+	public LinkedList<NonstopDataObject>  readInDB1BQuarter(int _year, int _quarter, LinkedList<NonstopDataObject> _sortedDB1BQuarter){
+
+		LinkedList<NonstopDataObject> sortedDB1B = _sortedDB1BQuarter;
+
+		String line, origin, destination, airportGroup;
+
+		StringTokenizer st;
+
+		int  year=_year, quarter=_quarter, quarterID, passengers;		
+
+		long time = System.currentTimeMillis();
+		System.out.println("FindAndSortDB1BFlights - Reading in the data of year "+year+" quarter "+quarter+"...");
+
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(new File(dirURL_segment+File.separator+"Output"+File.separator+"quarteraggregate"+File.separator+"wholeNetwork"+File.separator+"quarteraggregate_sorted_"+year+"_"+quarter+extension)));
+
+			line = br.readLine();
+
+			line = br.readLine(); //skip the header
+
+			int i = numberOfLinesToReadTestMode;
+
+			while( i!= 0 && line != null){
+				--i;
+
+				st = new StringTokenizer(line, ";");
+
+				//Origin.
+				origin = st.nextToken();
+				if(debug) System.out.print(origin+" - ");
+
+				//Destination.
+				destination = st.nextToken();
+				if(debug) System.out.print(destination+" - ");
+
+				//Airport Group.			
+				airportGroup = st.nextToken();
+				if(debug) System.out.print(airportGroup+" - ");
+
+				//Year
+				year = Integer.parseInt(st.nextToken());
+
+				//QuarterID
+				quarterID = Integer.parseInt(st.nextToken());
+
+				//Passengers
+				passengers= Integer.parseInt(st.nextToken());
+				if(debug) System.out.print(passengers+" - ");
+
+				sortedDB1B.add(new NonstopDataObject(origin, destination, airportGroup, year, quarterID, passengers));	
+
+				line = br.readLine();
+			}
+			System.out.println("... took "+(System.currentTimeMillis()-time)/1000+" seconds.");
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		time = System.currentTimeMillis();
+		Collections.sort(sortedDB1B, new AirportGroupComparator());
+
+		System.out.println("...and the sorting took "+(System.currentTimeMillis()-time)/1000+" seconds.");
+
+		return sortedDB1B;
+	}
+
+
+
+
+
 
 
 
