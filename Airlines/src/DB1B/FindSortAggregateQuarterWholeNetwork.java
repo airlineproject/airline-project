@@ -22,11 +22,11 @@ public class FindSortAggregateQuarterWholeNetwork {
 
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
-	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
+	//static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
+	//static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
-	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
-	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
+	static String dirURL_segment = "H:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
+	static String dirURL_segmentSave = "H:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
 
 	String fileSegment = "Origin_and_Destination_Survey_DB1BMarket_";
 	static String output = "flightdatalist_nonstop";	
@@ -102,14 +102,12 @@ public class FindSortAggregateQuarterWholeNetwork {
 			LinkedList<NonstopDataObject> sortedDB1BAllQuarters = new LinkedList<NonstopDataObject>();
 
 			for(int k =1; k<=4; k++) {	
-
 				readInDB1BQuarter(j,k, sortedDB1BAllQuarters);
-
 			}
 
 			// Aggregate and save to csv
 			LinkedList<NonstopDataObject> YearDataList = aggregateToAirportGroup(sortedDB1BAllQuarters);
-			output = "yearaggregate"+File.separator+"wholeNetwork"+File.separator+"nonstop_yearaggregate_sorted";
+			output = "yearaggregate"+File.separator+"wholeNetwork"+File.separator+"yearaggregate_sorted";
 			printDB1BDataObjects(YearDataList,j,0);
 			
 			
@@ -118,8 +116,6 @@ public class FindSortAggregateQuarterWholeNetwork {
 			output = "yearaggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"nonstop_yearaggregate_sorted";
 			printDB1BDataObjects(YearNonstopDataList,j,0);
 			
-			
-
 		}
 
 	}

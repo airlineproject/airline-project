@@ -32,14 +32,13 @@ public class findHubPassengers {
 
 	// Linux File Folders
 	//static String dirURL_geo = "/media/AndiUSB500/Alliance Competition/timetables/openflight/airports_geoCoordinates.dat";
-	static String dirURL_segment = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market";
-	static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
+	//static String dirURL_segmentSave = "/media/AndiUSB500/Alliance Competition/timetables/DOT/DB1B Market/Output";
 
-	//static String dirURL_segment = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market";
-	//static String dirURL_segmentSave = "E:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output_hubpassengers";
+	static String dirURL_segmentSave = "H:\\Alliance Competition\\timetables\\DOT\\DB1B Market\\Output";
 
-	String fileSegment = "Origin_and_Destination_Survey_DB1BMarket_";
+	static String input_folder;
 	static String output = "flightdatalist_nonstop";	
+	static String fileSegment = "quarteraggregate_sorted_";
 	static String extension = ".csv";
 
 	static int startyear = 1993;
@@ -78,8 +77,9 @@ public class findHubPassengers {
 
 
 	private void findAndPrintHubPassengers() {
-
-		output = "quarteraggregate_nonstop"+File.separator+"wholeNetwork"+File.separator+"hubpassengers"+File.separator+"flightdatalist_hubpassengers";
+		input_folder = dirURL_segmentSave+File.separator+"quarteraggregate"+File.separator+"wholeNetwork";
+		output = 										 "quarteraggregate"+File.separator+"wholeNetwork"+File.separator+"hubpassengers"+File.separator+"flightdatalist_hubpassengers";
+		fileSegment = "quarteraggregate_sorted_";
 		for(int j = startyear; j <= endyear; j++){
 			for(int k =1; k<=4; k++) {
 
@@ -88,18 +88,30 @@ public class findHubPassengers {
 
 				// Save in csv
 				printHubPassengers(hubPassengers,j,k);
-
-
 			}
+		}	
+
+		// Find them also for the year aggregate!
+		input_folder = dirURL_segmentSave+File.separator+"yearaggregate"+File.separator+"wholeNetwork";
+		output = 										 "yearaggregate"+File.separator+"wholeNetwork"+File.separator+"hubpassengers"+File.separator+"flightdatalist_hubpassengers";
+		fileSegment = "yearaggregate_sorted_";
+		for(int j = startyear; j <= endyear; j++){
+
+			// Read in the data and remember the Hub passengers for every Airport
+			THashMap<String, Integer> hubPassengersYear = findPassengers(j,0);
+			// Save in csv
+			printHubPassengers(hubPassengersYear,j,0);
 		}
+
 
 	}
 
 
 	public THashMap<String, Integer> findPassengers (int _year, int _quarter){
 
-		String line, airportGroup, temp, origin, destination;
+		String line, airportGroup, temp, destination;
 		int  year=_year, quarter=_quarter, passengers, combinedPassengers;
+		StringTokenizer st;
 
 		long time = System.currentTimeMillis();
 		System.out.println("Reading in the data of year "+year+" quarter "+quarter+"...");
@@ -108,88 +120,59 @@ public class findHubPassengers {
 
 		BufferedReader br;
 		try {
-			br = new BufferedReader(new FileReader(new File(dirURL_segment+File.separator+fileSegment+year+"_"+quarter+extension)));
+			br = new BufferedReader(new FileReader(new File(input_folder+File.separator+fileSegment+year+"_"+quarter+extension)));
 
 			line = br.readLine();
 
-			//Problem with string tokenizer (does not understand ","). So we use matcher.
-			//never change the number of groups in this pattern (2)! :-) 
-			Pattern csvPattern = Pattern.compile("(\"[^\"]*\")|(?<=,|^)([^,]*)(?:,|$)");
-			Matcher matcher = csvPattern.matcher(line);
-			int numberOfTokensInEveryLine = 0;
-
-			while (matcher.find()) {
-				++numberOfTokensInEveryLine;
-			}
-
 			line = br.readLine(); //Jump to second line to skip header.
 
-			String match;
-			String[] tokens;
-			int counter;
-
 			int i = numberOfLinesToReadTestMode;
-
 
 			while( i!= 0 && line != null){
 				--i;
 
-				try{
-					tokens = new String[numberOfTokensInEveryLine];
-					counter = 0;
-					matcher = csvPattern.matcher(line);
-					while (matcher.find()) {
-						match = matcher.group(1);
-						if (match!=null) {
-							tokens[counter++] = match;
-						}
-						else {
-							tokens[counter++] = matcher.group(2);
-						}
+				st = new StringTokenizer(line, ";");
+
+				//Airport Group.	
+				temp = st.nextToken(); // origin
+				temp = st.nextToken(); // destination
+				airportGroup = st.nextToken(); // airportGroup
+				if(debug) System.out.print(airportGroup+" - ");
+
+				//Passengers
+				temp = st.nextToken(); // year
+				temp = st.nextToken(); // quarterID
+				temp = st.nextToken(); // passengers
+				passengers= Integer.parseInt(temp);
+				if(debug) System.out.print(passengers+"\n");
+
+				StringTokenizer st_air = new StringTokenizer(airportGroup, ":");
+				temp = st_air.nextToken(); // Jump directly to the first destination
+				destination = st_air.nextToken();
+				while(st_air.hasMoreTokens()){
+					// The old destination airport is a hub, as there are more tokens in the airportGroup
+
+					// Check if airport is in list yet, if not add airport as key and passengers as value
+					if(!hubPassengers.contains(destination)){
+						hubPassengers.put(destination,passengers);
+						if(debug) System.out.print("new: "+destination+" passengers: "+passengers+"\n");
 					}
 
-					//Airport Group.			
-					airportGroup = tokens[21];
-					airportGroup = airportGroup.substring(1 , airportGroup.length()-1);
-					if(debug) System.out.print(airportGroup+" - ");
-
-					//Passengers
-					temp = tokens[31];
-					temp = temp.substring(0, temp.length()-3);
-					passengers= Integer.parseInt(temp);
-					if(debug) System.out.print(passengers+"\n");
-
-					StringTokenizer st = new StringTokenizer(airportGroup, ":");
-					origin = st.nextToken();
-					destination = st.nextToken();
-					while(st.hasMoreTokens()){
-						// The old destination airport is a hub
-
-						// Check if airport is in list yet, if not add airport as key and passengers as value
-						if(!hubPassengers.contains(destination)){
-							hubPassengers.put(destination,passengers);
-							if(debug) System.out.print("new: "+destination+" passengers: "+passengers+"\n");
-						}
-
-						// If airport key already in list, add passengers to already known passengers as value
-						else{
-							combinedPassengers = hubPassengers.get(destination)+ passengers;
-							hubPassengers.put(destination, combinedPassengers);	
-							if(debug) System.out.print("known: "+destination+" passengers: "+passengers+"\n");
-						}
-
-						// get the next airport pair
-						origin = destination;	
-						destination = st.nextToken();
+					// If airport key already in list, add passengers to already known passengers as value
+					else{
+						combinedPassengers = hubPassengers.get(destination)+ passengers;
+						hubPassengers.put(destination, combinedPassengers);	
+						if(debug) System.out.print("known: "+destination+" passengers: "+passengers+"\n");
 					}
 
-				} catch (NoSuchElementException e) {
-					System.out.println("Failure in line : "+line);
-					//e.printStackTrace();
+					// get the next destination airport
+					destination = st_air.nextToken();
 				}
 
 				line = br.readLine();
+
 			}
+
 			System.out.println("... took "+(System.currentTimeMillis()-time)/1000+" seconds.");
 			br.close();
 
@@ -203,10 +186,8 @@ public class findHubPassengers {
 		return hubPassengers;
 	}
 
-	
-
 	private void printHubPassengers(THashMap<String, Integer> _hubPassengers, int _year, int _quarter) {
-		
+
 		int year = _year, quarter = _quarter;
 
 		try {
